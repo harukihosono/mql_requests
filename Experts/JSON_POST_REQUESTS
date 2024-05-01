@@ -1,0 +1,67 @@
+// Copyright notice and other MQL4 header properties
+#property copyright "Copyright © 2019-2021 Artem Maltsev (Vivazzi)"
+#property link      "https://vivazzi.pro"
+#property strict
+
+#include <requests/requests.mqh>
+
+#define DEBUG_REQUESTS
+
+class RequestHandler {
+private:
+    string TEST_URL;
+
+public:
+    RequestHandler() {
+        TEST_URL = "http://localhost/";
+    }
+
+    // Function to send a GET request
+    void sendGetRequest() {
+        Requests requests;
+        Response response = requests.get(TEST_URL, "par_1=foo&par_2=bar");
+        Print("GET Response: ", response.text);
+    }
+
+    // Function to send a standard POST request
+    void sendPostRequest() {
+        Requests requests;
+        Response response = requests.post(TEST_URL, "par_1=foo&par_2=bar");
+        Print("POST Response: ", response.text);
+    }
+
+    // Function to send a POST request with JSON data
+    void sendJsonPostRequest() {
+        Requests requests;
+        string jsonData = "{\"par_1\":\"foo\", \"par_2\":\"bar\"}"; // Example JSON data
+        Response response = requests.postJson(TEST_URL, jsonData);  // Assuming 'postJson' method is defined to handle JSON content
+        Print("POST JSON Response: ", response.text);
+    }
+
+    // Function to dynamically send GET or POST requests
+    void sendDynamicRequest(string method) {
+        Requests requests;
+        string data = method == "POST" ? "par_1=foo&par_2=bar" : "";
+        Response response = requests.send(method, TEST_URL, data);
+        Print(method + " Response: ", response.text);
+    }
+
+};
+
+int OnInit(){
+    RequestHandler handler;
+
+    Print("Sending GET Request...");
+    //handler.sendGetRequest();
+
+    Print("Sending POST Request...");
+   // handler.sendPostRequest();
+
+    Print("Sending POST JSON Request...");
+    handler.sendJsonPostRequest();
+
+    Print("Sending Dynamic POST Request...");
+   // handler.sendDynamicRequest("POST");
+
+    return(INIT_SUCCEEDED);
+}
